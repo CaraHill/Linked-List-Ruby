@@ -22,8 +22,8 @@ class Deque
   def push(number)
     new_node = Node.new(number)
 
-    new_node.next = @node unless @node.nil?
-    @node.previous = new_node unless @node.nil?
+    new_node.previous = @node unless @node.nil?
+    @node.next = new_node unless @node.nil?
 
     @node = new_node
   end
@@ -32,17 +32,27 @@ class Deque
     return @node if @node.nil?
 
     element = @node
-    @node = element.next
-    element.next = nil
+    @node = element.previous
+    element.previous = nil
     element.datum
   end
 
   def shift
     return @node if @node.nil?
-    return @node.datum if @node.next.nil?
+    return @node.datum if @node.previous.nil?
 
-    element = @node.next
-    @node.next = nil
+    element = @node
+    @node = element.next
+    element.next = nil
     element.datum
+  end
+
+  def unshift(number)
+    new_node = Node.new(number)
+
+    new_node.next = @node unless @node.nil?
+    @node.previous = new_node unless @node.nil?
+
+    @node = new_node
   end
 end
