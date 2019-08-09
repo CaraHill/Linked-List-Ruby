@@ -31,8 +31,15 @@ class Deque
   def pop
     return @node if @node.nil?
 
+    if @node.next
+      element = @node.next
+      @node.next = nil if @node
+      return element.datum
+    end
+
     element = @node
     @node = element.previous
+    @node.next = nil if @node
     element.datum
   end
 
