@@ -33,17 +33,21 @@ class Deque
 
     element = @node
     @node = element.previous
-    element.previous = nil
     element.datum
   end
 
   def shift
     return @node if @node.nil?
-    return @node.datum if @node.previous.nil?
 
-    element = @node
-    @node = element.next
-    element.next = nil
+    unless @node.previous
+      element = @node
+      @node = element.next
+      @node.previous = nil if @node
+      return element.datum
+    end
+
+    element = @node.previous
+    @node.previous = nil
     element.datum
   end
 
