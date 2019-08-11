@@ -22,7 +22,7 @@ class Deque
   def push(number)
     new_node = Node.new(number)
 
-    if @node && @node.next
+    if @node&.next
       new_node.previous = @node.next
       new_node.previous.next = new_node
     end
