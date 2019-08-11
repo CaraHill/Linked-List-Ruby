@@ -22,8 +22,13 @@ class Deque
   def push(number)
     new_node = Node.new(number)
 
-    new_node.previous = @node unless @node.nil?
-    @node.next = new_node unless @node.nil?
+    if @node && @node.next
+      new_node.previous = @node.next
+      new_node.previous.next = new_node
+    end
+
+    new_node.previous = @node unless @node.nil? || @node.next
+    @node.next = new_node unless @node.nil? || @node.next
 
     @node = new_node
   end
@@ -53,8 +58,20 @@ class Deque
       return element.datum
     end
 
-    element = @node.previous
-    @node.previous = nil
+    unless @node.previous.previous
+      element = @node.previous
+      @node.previous = nil
+      return element.datum
+    end
+
+    if @node.previous.previous
+      element = @node.previous.previous
+      @node.previous.previous = nil
+      return element.datum
+    end
+
+    element = @node
+    @node = nil
     element.datum
   end
 
