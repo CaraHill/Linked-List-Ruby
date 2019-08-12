@@ -3,8 +3,7 @@
 # The Node class
 class Node
   attr_reader   :datum
-  attr_accessor :next
-  attr_accessor :previous
+  attr_accessor :next, :previous
 
   def initialize(datum)
     @datum = datum
@@ -16,71 +15,62 @@ end
 # The Deque class
 class Deque
   def initialize
-    @node = nil
+    @head = nil
+    @tail = nil
   end
 
   def push(number)
     new_node = Node.new(number)
+    new_node.previous = @tail
+    @tail.next = new_node if @tail
 
-    if @node&.next
-      new_node.previous = @node.next
-      new_node.previous.next = new_node
-    end
-
-    new_node.previous = @node unless @node.nil? || @node.next
-    @node.next = new_node unless @node.nil? || @node.next
-
-    @node = new_node
+    @tail = new_node
+    @head = new_node if @head.nil?
   end
 
   def pop
-    return @node if @node.nil?
+    element = @tail
 
-    if @node.next
-      element = @node.next
-      @node.next = nil if @node
-      return element.datum
-    end
+    nilify_tail_and_head if @tail == @head
 
-    element = @node
-    @node = element.previous
-    @node.next = nil if @node
+    update_tail unless @tail == @head
+
     element.datum
   end
 
   def shift
-    return @node if @node.nil?
+    element = @head
 
-    unless @node.previous
-      element = @node
-      @node = element.next
-      @node.previous = nil if @node
-      return element.datum
-    end
+    nilify_tail_and_head if @tail == @head
 
-    unless @node.previous.previous
-      element = @node.previous
-      @node.previous = nil
-      return element.datum
-    end
+    update_head unless @tail == @head
 
-    if @node.previous.previous
-      element = @node.previous.previous
-      @node.previous.previous = nil
-      return element.datum
-    end
-
-    element = @node
-    @node = nil
     element.datum
   end
 
   def unshift(number)
     new_node = Node.new(number)
+    new_node.next = @head
+    @head.previous = new_node if @head
 
-    new_node.next = @node unless @node.nil?
-    @node.previous = new_node unless @node.nil?
+    @head = new_node
+    @tail = new_node if @tail.nil?
+  end
 
-    @node = new_node
+  private
+
+  def nilify_tail_and_head
+    @head = nil
+    @tail = nil
+  end
+
+  def update_tail
+    @tail = @tail.previous
+    @tail.next = nil
+  end
+
+  def update_head
+    @head = @head.next
+    @head.previous = nil
   end
 end
